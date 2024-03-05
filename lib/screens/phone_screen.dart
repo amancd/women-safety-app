@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_sms/flutter_sms.dart';
 import 'package:geolocator/geolocator.dart';
@@ -17,18 +19,33 @@ class _PhoneScreenState extends State<PhoneScreen> {
   PhoneDB db = PhoneDB();
 
   String _emergencyPhoneNumber = "+911234567890"; // Default emergency phone number
+  late Timer _locationTimer;
+  int _numberOfMessages = 5;
 
   @override
   void initState() {
     if (_myBox.get("fav") != null) {
       db.loadData();
-      // Assuming the first phone number is the emergency contact
-      if (db.favList.isNotEmpty && db.favList[0].isNotEmpty) {
-        _emergencyPhoneNumber = "+91${db.favList[0][0]}";
-      }
     }
+    if (db.favList.isNotEmpty) {
+      _emergencyPhoneNumber = "+91${db.favList[0][0]}";
+    }
+    _locationTimer = Timer.periodic(const Duration(minutes: 1), (Timer timer) {
+      if (_numberOfMessages > 0) {
+        startSendingLocation();
+        _numberOfMessages--;
+      } else {
+        _locationTimer.cancel(); // Stop the timer after sending messages
+      }
+    });
     _requestSMSPermission();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _locationTimer.cancel(); // Cancel the timer when the widget is disposed
+    super.dispose();
   }
 
   void _requestSMSPermission() async {
@@ -121,12 +138,11 @@ class _PhoneScreenState extends State<PhoneScreen> {
     try {
       await sendSMS(message: message, recipients: [phoneNumber], sendDirect: true);
     } catch (error) {
-      // Handle any errors here
       print("Failed to send SMS: $error");
     }
   }
 
   void stopSendingLocation() {
-    // Stop sending location logic goes here
+    _locationTimer.cancel();
   }
 }

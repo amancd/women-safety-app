@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:womensafety/screens/ask_phone_no.dart';
+import 'package:womensafety/screens/phone_screen.dart';
 
 
 class Navigation extends StatelessWidget {
@@ -105,7 +106,7 @@ Widget buildMenuItems(BuildContext context) {
           title: const Text("SOS Feature", style: TextStyle(color: Colors.black)),
           onTap: () {
             Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => const AskPhone()),
+              MaterialPageRoute(builder: (context) => const PhoneScreen()),
             );
           },
         ),

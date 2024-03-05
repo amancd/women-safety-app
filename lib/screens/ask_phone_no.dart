@@ -19,7 +19,7 @@ class _AskPhoneState extends State<AskPhone> {
 
   final _myBox = Hive.box('mybox');
   PhoneDB db = PhoneDB();
-  List<List<String>> _favList = [];
+  final List<List<String>> _favList = [];
 
   bool _isPhoneNumberValid = true;
   int _selectedNumberOfPhones = 1;
